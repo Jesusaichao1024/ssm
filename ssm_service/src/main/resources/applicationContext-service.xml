@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd 
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+    <!--引入dao层的文件-->
+    <import resource="classpath:applicationContext-dao.xml"></import>
+    <!--开启扫包模式-->
+    <context:component-scan base-package="jesusaichao.serviceimpl"></context:component-scan>
+    <!--开启注解模式-->
+    <tx:annotation-driven></tx:annotation-driven>
+    <!--开启事务管理器-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+        <!--注入依赖-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+</beans>

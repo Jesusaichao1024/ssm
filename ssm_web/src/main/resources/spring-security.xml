@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security-4.2.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+    <!--配置不需要权限就能访问的-->
+    <security:http pattern="/login.jsp" security="none"></security:http>
+    <security:http pattern="/failure.jsp.jsp" security="none"></security:http>
+    <security:http pattern="/css/**" security="none"></security:http>
+    <security:http pattern="/img/**" security="none"></security:http>
+    <security:http pattern="/pages/**" security="none"></security:http>
+    <security:http pattern="/plugins/**" security="none"></security:http>
+<!--配置安全权限的规则
+jsp页面控制菜单的显示
+需要把把表达式设置成true
+-->
+    <security:http auto-config="true" use-expressions="true">
+        <security:intercept-url pattern="/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_PRODUCT','ROLE_ORDERS')"></security:intercept-url>
+        <!--
+        登录配置
+        login-page-自定义登录页面
+        failure-验证失败页面
+        default-登录成功页面
+        processing-登录的请求路劲 jsp表单请求地址
+        -->
+        <security:form-login login-page="/login.jsp"
+                             authentication-failure-url="/failure.jsp"
+                             default-target-url="/index.jsp"
+                             login-processing-url="/login"></security:form-login>
+        <!--退出配置-->
+        <security:logout invalidate-session="true" logout-success-url="/login.jsp" logout-url="/logout"></security:logout>
+        <!--权限不足提示页面的配置-->
+        <security:access-denied-handler error-page="/403.jsp"></security:access-denied-handler>
+        <!--关闭跨拦截请求的拦截-->
+        <security:csrf disabled="true"></security:csrf>
+    </security:http>
+    <!--配置加密类-->
+    <bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" id="passwordEncoder"></bean>
+
+    <!--配置节点-->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userService">
+        <security:password-encoder ref="passwordEncoder"></security:password-encoder>
+           <!-- <security:password-encoder hash="bcrypt"></security:password-encoder>-->
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>
